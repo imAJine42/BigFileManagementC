@@ -54,7 +54,7 @@ int main()
   if (!fin.good()) throw "I/O error";  
 
   // read the input file
-  clock_t startTime = clock();
+  clock_t startTime = clock(); // Timing the performance
   int completion = 0;
   while (fin.good())
   {
@@ -74,6 +74,7 @@ int main()
     const string subjectCode(course.begin(), course.begin() + course.find('-'));
 
     // if I get this far, then it's a valid record
+    // Looks for duplicates
     bool found = false;
     int i, j;
     for(i = 0; i < duplicates.size(); i++)
@@ -93,23 +94,27 @@ int main()
       }
     }
     
+    // If no Duplicates found continue
     if(found == false)
     {
-      if(i == duplicates.size())
+      // For Duplicates
+      if(i == duplicates.size()) // Adds new Vector<String> 
       {
         duplicates.push_back(vector<string>());
         duplicates[i].push_back(term);
         duplicates[i].push_back(section);
       }
-      else if(j == duplicates[i].size()) duplicates[i].push_back(section);
+      else if(j == duplicates[i].size()) // Pushes section to the current vector
+        duplicates[i].push_back(section);
       
+      // For Data
       Node* p;
       for(p = start; p; p = p->next)
         if(subjectCode == p->data.name) break;
       
-      if(p) p->data.count++;
+      if(p) p->data.count++; // Adds to existing data
       else
-      {
+      { // Creates new vector and sorts the data
         Node* prev;
         for(prev = 0, p = start; p; prev = p, p = p->next)
           if(subjectCode < p->data.name) break;
@@ -125,14 +130,15 @@ int main()
       }
     }
     
+    // For Buffering
     if(completion % 10000 == 0) cout << '.';
-    cout.flush();
     completion++;
   }
   fin.close();
   double elapsedSeconds = (double)(clock() - startTime) / CLOCKS_PER_SEC;
   cout << "finish" << endl;
   
+  // Output
   Node* p;
   Node* prev;
   for(prev = start, p = start->next; p; prev = p, p = p->next)
@@ -148,6 +154,7 @@ int main()
   cout << endl;
   cout << "Runtime: " << elapsedSeconds << endl;
   
+  // Deallocation
   while(start)
   {
     Node* p = start->next;
